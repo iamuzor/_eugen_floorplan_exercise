@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Floor plan</title>
 </head>
 
 <body>
@@ -74,16 +74,20 @@
                 desk.addEventListener("click", (e) => {
                     let tooltip = document.getElementById('desk_info')
 
+                    // we need to remove the already existing tooltip ie. if one exists.
                     if (tooltip) {
                         tooltip.remove()
                     }
 
+                    // create tooltip element and the content for it.
                     tooltip = document.createElement("div");
                     tooltip.id = 'desk_info'
                     tooltip.style.padding = "10px";
                     tooltip.style.fontSize = "24px";
+                    tooltip.style.border = "2px solid black"
                     tooltip.innerText = "Desk: " + JSON.stringify(desks[id]);
 
+                    // adds the tooltip element to DOM
                     document.body.appendChild(tooltip)
                 });
             }
