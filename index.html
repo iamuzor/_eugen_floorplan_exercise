@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+
+<body>
+    <object id="floorplan" type="image/svg+xml" data="./floorplan_final.svg" class="floorplan-svg"></object>
+</body>
+
+<script>
+    /**
+     * Gets desk data from backend API
+     **/
+    const fetchDeskDataFromBackend = async () => {
+        try {
+            const response = await fetch(
+                "https://backend-service-436339249473.europe-west1.run.app/api/desk-data"
+            );
+            const data = await response.json();
+            const deskDataMap = {};
+
+            data.forEach((desk) => {
+                deskDataMap[desk.deskNo] = desk;
+            });
+
+            return deskDataMap;
+        } catch (error) {
+            console.error("Error fetching desk data:", error);
+
+            return {};
+        }
+    };
+
+    const handleDeskOnClick = (e) => {
+        // remove previous tooltip, if any
+        let tooltip = document.getElementById('desk_info')
+
+        if (tooltip) {
+            tooltip.remove()
+        }
+
+        tooltip = document.createElement("div");
+        tooltip.id = 'desk_info'
+        tooltip.style.padding = "10px";
+        tooltip.style.fontSize = "24px";
+        tooltip.innerText = "Hello world";
+
+        document.body.appendChild(tooltip)
+    };
+
+    /**
+     *
+     **/
+    document.addEventListener("DOMContentLoaded", async () => {
+        const desks = await fetchDeskDataFromBackend();
+        const floorPlan = document.getElementById("floorplan");
+
+        floorPlan.addEventListener("load", function (e) {
+            for (const id in desks) {
+                const desk = floorPlan.contentDocument.getElementById(id);
+
+                if (!desk) {
+                    continue;
+                }
+
+                // adds style for each desk element within svg
+                desk.style.cursor = "pointer";
+
+                // adds click event to desk
+                desk.addEventListener("click", (e) => {
+                    let tooltip = document.getElementById('desk_info')
+
+                    if (tooltip) {
+                        tooltip.remove()
+                    }
+
+                    tooltip = document.createElement("div");
+                    tooltip.id = 'desk_info'
+                    tooltip.style.padding = "10px";
+                    tooltip.style.fontSize = "24px";
+                    tooltip.innerText = "Desk: " + JSON.stringify(desks[id]);
+
+                    document.body.appendChild(tooltip)
+                });
+            }
+        });
+    });
+</script>
+
+</html>
